@@ -1,0 +1,15 @@
+CREATE TABLE Recipes (
+    recipeId INT PRIMARY KEY,
+    recipeName NVARCHAR(max)
+);
+
+CREATE TABLE Ingredients (
+    ingredientId INT PRIMARY KEY,
+    ingredientName NVARCHAR(max)
+);
+
+CREATE TABLE RI (
+    ingredientName NVARCHAR(max),
+    ingredientId INT FOREIGN KEY REFERENCES Ingredients(ingredientId),
+    recipeId INT FOREIGN KEY REFERENCES Recipes(recipeId)    
+);
