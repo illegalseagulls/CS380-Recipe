@@ -1,0 +1,3 @@
+Simple creation of a relational database. Recipes, Ingredients, and RI tables. 
+Recipes stores recipe names and recipeId, Ingredients stores ingredient names and ingredientId. Both of these tables have unique values. Only one of each ingredient will be in the ingredient table
+The RI table is where duplicate values are found (i.e., if recipe 1 and 3 contain oil, then Oil will be found in this table twice with the corresponding keys)
