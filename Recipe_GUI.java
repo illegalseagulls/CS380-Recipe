@@ -25,6 +25,7 @@ public class Recipe_GUI {
    
       
       str = str.toLowerCase();
+      str = str.replaceAll("\\s+","");
       
       String ingredientList[] = str.split(",");
       
@@ -43,7 +44,7 @@ public class Recipe_GUI {
          else if(ingredientList[i].equals("oil")) {
             ingredientInt[i] = 4;
          }
-         else if(ingredientList[i].equals("chocolate chips")) {
+         else if(ingredientList[i].equals("chocolatechips")) {
             ingredientInt[i] = 5;
          }
          else if(ingredientList[i].equals("flour")) {
