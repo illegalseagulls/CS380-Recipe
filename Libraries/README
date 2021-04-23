@@ -1,1 +1,2 @@
-Libaries used with connecting SQL to Java. Used JDK version 13
+Libaries used with connecting SQL to Java. Used JDK version 13.
+Place the .dll file inside the /bin folder of your JDK folder on your PC. Place the proper .jar file in your project path.
