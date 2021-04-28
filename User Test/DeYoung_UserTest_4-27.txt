@@ -1,0 +1,6 @@
+Commnets from User about the Recipe_GUI.java
+
+Allow for spaces when inputting data
+
+Wants to see all the recipes in database, with a dropdown menu that lists the ingredients for those recipes.
+Then have a search bar above that to search for ingredients as originally intended. (Cookbook with find feature)
