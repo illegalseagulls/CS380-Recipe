@@ -4,3 +4,6 @@ Allow for spaces when inputting data
 
 Wants to see all the recipes in database, with a dropdown menu that lists the ingredients for those recipes.
 Then have a search bar above that to search for ingredients as originally intended. (Cookbook with find feature)
+
+DEV NOTES:
+User thought that the software was more like a cookbook than a search engine. In my opinion, this would be very easy to implement and very useful
