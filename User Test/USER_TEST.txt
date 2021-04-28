@@ -1,0 +1,27 @@
+USER TEST FOR SPRINT 1:
+
+Test 1:
+
+- Confusion over whether the testing worked or not
+- understood after brief explanation
+- appears that it will be much more viable after database is setup
+
+Test 2:
+
+- Found the concept to be interesting
+- would like to see buttons for ingredients when we have gui implementation
+- would help to have a list returned explaining the rest of the ingredients you may need
+
+Test 3:
+
+- More fundamental ingredients necessary such as eggs.
+- Confused about output, much more in depth return would help
+- Maybe just stating exactly what recipes that are avaliable instead of numbers would make sense
+- Also stating what ingredients go to what recipe would help greatly
+
+Dev Notes:
+
+I noticed through my tests that overall people were fairly confused about the outputs and operation of the program, 
+even after some level of explanation. I do think it would be easy to refine some of the more minor details, however,
+I also think that most of this confusion and deeper issue will be solved with proper database implementation and frontend
+design.
