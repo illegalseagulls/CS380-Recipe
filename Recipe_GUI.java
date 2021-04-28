@@ -1,5 +1,6 @@
 // Kahle Broadnax
-//
+// George Kim
+
 import java.util.*;
 public class Recipe_GUI {
 
@@ -7,7 +8,7 @@ public class Recipe_GUI {
    //method for obtaining string ingredients
    public static String getIngredient() {
    
-      System.out.println("What ingredient(s) would you like to search for? Use commas and no spaces to seperate ingredients");
+      System.out.println("What ingredient(s) would you like to search for? Use commas and no spaces to separate ingredients and amount separated with :");
       
       Scanner sc = new Scanner(System.in);   
       String str = sc.nextLine();
@@ -15,58 +16,67 @@ public class Recipe_GUI {
       sc.close();
       
    
-      System.out.println("Ingredients entered, peforming conversion and check");
+      System.out.println("Ingredients entered, performing conversion and check");
       
       return str;
    }
    
    //method for comma seperating ingredients, and converting into a list of predefined integers
-   public static int[] checkIngredient(String str) {   
+    public static Map<String,Integer> checkIngredient(String str) {
       
         str = str.toLowerCase();
         str = str.replaceAll("\\s+","");
-
         String ingredientList[] = str.split(",");
-        LinkedHashSet<Integer> removeDup= new LinkedHashSet<Integer>(); //remove duplicates and ingredient not on database
-        
-        HashMap<String,Integer> ingredientI = new HashMap<String, Integer>();// changed to hashmap
-        ingredientI.put("milk",1);
-        ingredientI.put("pasta",2);
-        ingredientI.put("cheese",3);
-        ingredientI.put("oil",4);
-        ingredientI.put("chocolatechips",5);
-        ingredientI.put("flour",6);
-        ingredientI.put("sugar",7);
-        ingredientI.put("nuts",8);
-        ingredientI.put("vanilla",9);
-        ingredientI.put("salt",10);
-        ingredientI.put("pepper",11);
-        ingredientI.put("chicken",12);
-        ingredientI.put("water",13);
-        ingredientI.put("rice",14);
+
+        HashMap<String,Integer> userInput = new HashMap<String,Integer>();//used to stored temp value of userInput
+
+        for (String part : ingredientList) { //to split the string and digit from array
+
+            String userData[] = part.split(":");
+
+            String ingreName = userData[0].trim();
+            int ingreAmount = Integer.parseInt(userData[1].trim());
+
+            userInput.put(ingreName, ingreAmount); // added each ingredients to hashmap with amount
+        }
+        ingredientList= userInput.keySet().toArray(new String[0]); // added keys of hashmap into array
+
+        LinkedHashSet<String> ingredientI= new LinkedHashSet<String>(); //The temp list of ingredients in the database
+        HashMap<String,Integer> ingredientR= new HashMap<String,Integer>(); // The hashmap of usable ingredients <String usable ingredients, amount of said ingredient>
+
+        ingredientI.add("milk"); // temp addition into temp database.
+        ingredientI.add("pasta");
+        ingredientI.add("cheese");
+        ingredientI.add("oil");
+        ingredientI.add("chocolatechips");
+        ingredientI.add("flour");
+        ingredientI.add("sugar");
+        ingredientI.add("nuts");
+        ingredientI.add("vanilla");
+        ingredientI.add("salt");
+        ingredientI.add("pepper");
+        ingredientI.add("chicken");
+        ingredientI.add("water");
+        ingredientI.add("rice");
 
         for (int i = 0; i<ingredientList.length; i++) { //checks if ingredient is in database
-            if(ingredientI.containsKey(ingredientList[i])) {
-                removeDup.add(ingredientI.get(ingredientList[i]));//adds to hashset which removes duplicates 
+            if(ingredientI.contains(ingredientList[i])) {
+                if(ingredientR.containsKey(ingredientList[i]))
+                    ingredientR.put(ingredientList[i],ingredientR.get(ingredientList[i])+ userInput.get(ingredientList[i]));//adds into hashmap with amounts
+                else
+                    ingredientR.put(ingredientList[i],0+ userInput.get(ingredientList[i]));// if there is no ingredient key then add one with ingredient amount.
             }
             else System.out.println("Ingredient "+ingredientList[i]+" not found.");//in cases where not found
 
         }
-        int ingredientInt[]= new int[removeDup.size()];
-        int index=0;
-        for(Integer i : removeDup ) { // used to add the hashset values into int array.
-            ingredientInt[index++] = i;
-        }
-
 
         System.out.println("Ingredient conversion and check complete");
-
-        return ingredientInt;
+        return ingredientR;
    }
    
    //method for determining the recipe(s) to display
    //currently placeholder inclusive (ingredients 1-4 refer to recipe 1, ingredients 5-9 refer to recipe 2, ingredients 10-14 refer to recipe 3)
-   public static int[] getRecipe(int[] ingredientInt) {
+   public static String[] getRecipe(Map<String,Integer> userList) {
    
       int recipeID[] = new int[3];
    
@@ -92,11 +102,10 @@ public class Recipe_GUI {
 
    public static void main(String[] args) {
    
-   String test = getIngredient();
-   int[] test2 = checkIngredient(test);
-   int[] test3 = getRecipe(test2);
-   
-   System.out.println("Recipe 1,2 and 3 availability: "+test3[0]+", "+test3[1]+", "+test3[2]);
+        String test = getIngredient();
+        Map<String,Integer> test2 = checkIngredient(test);
+        String[] test3 = getRecipe(test2);
+
    
    }
 
