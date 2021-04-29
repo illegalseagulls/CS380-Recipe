@@ -191,6 +191,18 @@ public class Recipe_GUIv003B {
       //Change this directory to wherever you have the recipes stored
       File dir = new File("C:\\Users\\kahle\\Desktop\\CS 380\\RecipeList");
       File[] dirListing = dir.listFiles();
+      
+      for (int i = 0; i < dirListing.length - 1; i++)
+      {
+        if (dirListing[i].compareTo(dirListing[i + 1]) < 0)
+        {
+            // swap to put them in order
+            File temp = dirListing[i];
+            dirListing[i] = dirListing[i + 1];
+            dirListing[i + 1] = temp;
+        }
+      }
+      
       File temp;
       
       //Checks if the boolean[] recipeID is true, and gets the corresponding recipe number (dirListing and recipeID are equal length)
