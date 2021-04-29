@@ -2,7 +2,7 @@
 //
 import java.util.*;
 import java.io.*;
-public class Recipe_GUIv003B {
+public class Recipe_GUIv003C {
 
 
    //method for obtaining string ingredients
@@ -235,21 +235,6 @@ public class Recipe_GUIv003B {
 
    public static void main(String[] args) 
    {
-       /* File[] a = new File[2];
-       a[0] = new File("C:\\Users\\rhawk\\Documents\\College\\CS 380\\Code\\Sprint 1\\Sprint 1\\RecipeList\\1_LasagnaRollUp.txt");
-       a[1] = new File("C:\\Users\\rhawk\\Documents\\College\\CS 380\\Code\\Sprint 1\\Sprint 1\\RecipeList\\10_GarlicNaan.txt");
-
-       System.out.println(a[0].compareTo(a[1]));
-
-       if (a[0].compareTo(a[1]) > 0)
-    {
-        System.out.println(a[0] + "\n" + a[1]);
-    }
-    else
-    {
-        System.out.println(a[1] + "\n" + a[0]);
-    } */
-    
        String test = getIngredient();
        int[] test2 = checkIngredient(test);
        boolean[] test3 = getRecipe(test2);
