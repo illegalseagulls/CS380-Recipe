@@ -4,29 +4,25 @@ public class CreateDatabase
 {
     // use to establish a connection to the database. Replace 'databaseName' with proper database
     // starts with no database name, will be updated after database is created
-    // jdbc:sqlserver://localhost:1433;databaseName=<databaseName>;integratedsecurity=true
-    private static String connectionURL = "jdbc:sqlserver://localhost:1433;integratedsecurity=true"; 
-
-    // used to establish the driver location
-    private static String className = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+    private static String URL = "jdbc:mysql://localhost:3307";
+    private static String user = "root";
+    private static String pass = "root";
 
     // creates a database with user input for the name, then fills the database with tables.
     public void createDatabase()
     {
-        try
+        try (Connection connection = DriverManager.getConnection(URL, user, pass))
         {
-            Class.forName(className);
+            //Class.forName(className);
 
-            Connection connection = DriverManager.getConnection(connectionURL);
-
-            String create = "CREATE DATABASE RecipeFinder";
+            String create = "CREATE DATABASE IF NOT EXISTS RecipeFinder";
 
             try (Statement statement = connection.createStatement())
             {
                 statement.executeUpdate(create);
 
                 // update connectionURL
-                connectionURL = "jdbc:sqlserver://localhost:1433;databaseName=RecipeFinder;integratedsecurity=true";
+                URL = "jdbc:mysql://localhost:3307/RecipeFinder";
                 System.out.println("Database created successfully!");
 
                 // create the tables
@@ -46,22 +42,22 @@ public class CreateDatabase
     private void createTables()
     {
         // connect to database
-        try (Connection connection = DriverManager.getConnection(connectionURL))
+        try (Connection connection = DriverManager.getConnection(URL, user, pass))
         {
-            Class.forName(className);
+            //Class.forName(className);
 
             // query Strings
-            String recipes = "CREATE TABLE Recipes (" + 
-            "recipeId INT NOT NULL PRIMARY KEY, recipeName NVARCHAR(max)" +
+            String recipes = "CREATE TABLE IF NOT EXISTS Recipes (" + 
+            "recipeId INT NOT NULL, recipeName NVARCHAR(100), PRIMARY KEY (recipeId)" +
             ");";
 
-            String ingredients = "CREATE TABLE Ingredients (" + 
-            "ingredientId INT NOT NULL PRIMARY KEY, ingredientName NVARCHAR(max)" +
+            String ingredients = "CREATE TABLE IF NOT EXISTS Ingredients (" + 
+            "ingredientId INT NOT NULL, ingredientName NVARCHAR(100), PRIMARY KEY (ingredientId)" +
             ");";
 
-            String ri = "CREATE TABLE RI (" + 
-            "ingredientName NVARCHAR(max), ingredientId INT FOREIGN KEY REFERENCES Ingredients(ingredientId), " + 
-            "recipeId INT FOREIGN KEY REFERENCES Recipes(recipeId)" +
+            String ri = "CREATE TABLE IF NOT EXISTS RI (" + 
+            "ingredientName NVARCHAR(100), ingredientId INT, recipeId INT, FOREIGN KEY (ingredientId) REFERENCES Ingredients(ingredientId), " + 
+            "FOREIGN KEY (recipeId) REFERENCES Ingredients(recipeId)" +
             ");";
 
             try (Statement stmt = connection.createStatement()/*; Statement stmt2 = connection.createStatement(); Statement stmt3 = connection.createStatement()*/)
