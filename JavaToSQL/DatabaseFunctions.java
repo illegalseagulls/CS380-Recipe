@@ -4,10 +4,9 @@ import java.util.*;
 public class DatabaseFunctions 
 {
     // use to establish a connection to the database. Replace 'databaseName' with proper database
-    private static String connectionURL = "jdbc:sqlserver://localhost:1433;databaseName=RecipeFinder;integratedsecurity=true";
-    
-    // used to establish the driver location
-    final private static String CLASSNAME = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+    private static String URL = "jdbc:mysql://localhost:3307/RecipeFinder";
+    private static String user = "root";
+    private static String pass = "root";
 
     // function to insert a new recipe into the database. Takes in the recipeName and ingredient list
     // need to check if the ingredient already exists in Ingredients. If so, then don't insert into Ingredients, but still update RI with a new connection to a recipe
@@ -15,10 +14,8 @@ public class DatabaseFunctions
     public void insertRecipe(String recipeName, ArrayList<String> ingredients)
     {
         // connect to database
-        try (Connection connection = DriverManager.getConnection(connectionURL))
+        try (Connection connection = DriverManager.getConnection(URL, user, pass))
         {
-            Class.forName(CLASSNAME);
-
             // insert statement
             String insertRec = "INSERT INTO Recipes VALUES(?,?);";
             String insertIng = "INSERT INTO Ingredients VALUES(?,?);";
@@ -76,10 +73,8 @@ public class DatabaseFunctions
     private int findMaxKey(String tableName)
     {
         // connect to database
-        try (Connection connection = DriverManager.getConnection(connectionURL))
+        try (Connection connection = DriverManager.getConnection(URL, user, pass))
         {
-            Class.forName(CLASSNAME);
-
             // query string
             String query= "";
 
@@ -117,10 +112,8 @@ public class DatabaseFunctions
     private boolean isIngredientInDatabase(String ingredientName)
     {
         // connect to database
-        try(Connection connection = DriverManager.getConnection(connectionURL))
+        try(Connection connection = DriverManager.getConnection(URL, user, pass))
         {
-            Class.forName(CLASSNAME);
-
             //query string
             String query = "SELECT ingredientName FROM Ingredients WHERE ingredientName = ?;";
 
@@ -151,10 +144,8 @@ public class DatabaseFunctions
     private int findIngredientKey(String ingredientName)
     {
         // connect to database
-        try (Connection connection = DriverManager.getConnection(connectionURL))
+        try (Connection connection = DriverManager.getConnection(URL, user, pass))
         {
-            Class.forName(CLASSNAME);
-
             // query string
             String query = "SELECT ingredientId FROM Ingredients WHERE ingredientName = ?;";
 
@@ -177,14 +168,13 @@ public class DatabaseFunctions
         return 0;
     } // end findIngredientKey
 
-    // searches for ingredients in a given recipe. Returns the recipe name
+    // searches for ingredients in a given recipe. Returns the recipe name. 
+    // main searching algorithm/idea. 
     public String findIngredientsInRecipe(ArrayList<String> ingredients, String recipeName)
     {
         // connect to database
-        try (Connection connection = DriverManager.getConnection(connectionURL))
+        try (Connection connection = DriverManager.getConnection(URL, user, pass))
         {            
-            Class.forName(CLASSNAME);
-
             int numIngredients = countIngredientsInRecipe(recipeName);
 
             // prepared statement string
@@ -233,10 +223,8 @@ public class DatabaseFunctions
     {
         ArrayList<String> ingredients = new ArrayList<String>();
         // connect to database
-        try (Connection connection = DriverManager.getConnection(connectionURL))
+        try (Connection connection = DriverManager.getConnection(URL, user, pass))
         {
-            Class.forName(CLASSNAME);
-
             // query string
             String query = "SELECT ingredientName FROM Ingredients;";
 
@@ -264,10 +252,8 @@ public class DatabaseFunctions
     {
         ArrayList<String> recipes = new ArrayList<String>();
         // connect to database
-        try (Connection connection = DriverManager.getConnection(connectionURL))
+        try (Connection connection = DriverManager.getConnection(URL, user, pass))
         {
-            Class.forName(CLASSNAME);
-
             // query string
             String query = "SELECT recipeName FROM Recipes;";
 
@@ -294,10 +280,8 @@ public class DatabaseFunctions
     private int countIngredientsInRecipe(String recipeName)
     {
         // connect to database
-        try (Connection connection = DriverManager.getConnection(connectionURL))
+        try (Connection connection = DriverManager.getConnection(URL, user, pass))
         {            
-            Class.forName(CLASSNAME);
-
             // query string
             String query = "SELECT COUNT(ingredientId) AS numIngredients " 
             + "FROM Recipes INNER JOIN RI ON Recipes.recipeId = RI.recipeId "
