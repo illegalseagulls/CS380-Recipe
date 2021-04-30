@@ -4,3 +4,6 @@ Test 1:
 - user didn't find any problems with current program. Would like to see more recipes. 
 
 Test 2: 
+- user didn't have any critiques. 
+
+Dev Notes: noticed that user inputs have to be capital sensitive, so a change should probably be made. 
