@@ -1,0 +1,9 @@
+Test 1:
+User was confused about output
+User was imagining the program to be more like pinterest, where once they search then different recipes would show up and they could choose to save one
+User wanted it to be more like a digital cookbook
+User didn't know if they should put ingredients in plural form such as "eggs" or just leave it as "egg"
+
+Dev notes:
+The user seemed quite lost and did not understand what the program was really meant to do. Could go with some clearing up and concision.
+It also might be important to tackle that thought of plural forms of words.
