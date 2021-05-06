@@ -4,25 +4,29 @@ public class CreateDatabase
 {
     // use to establish a connection to the database. Replace 'databaseName' with proper database
     // starts with no database name, will be updated after database is created
-    private static String URL = "jdbc:mysql://localhost:3307";
-    private static String user = "root";
-    private static String pass = "root";
+    // jdbc:sqlserver://localhost:1433;databaseName=<databaseName>;integratedsecurity=true
+    private static String connectionURL = "jdbc:sqlserver://127.0.0.1:1433; userName=testUser;password=testUser"; 
+
+    // used to establish the driver location
+    private static String className = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
 
     // creates a database with user input for the name, then fills the database with tables.
     public void createDatabase()
     {
-        try (Connection connection = DriverManager.getConnection(URL, user, pass))
+        try
         {
-            //Class.forName(className);
+            Class.forName(className);
 
-            String create = "CREATE DATABASE IF NOT EXISTS RecipeFinder";
+            Connection connection = DriverManager.getConnection(connectionURL);
+
+            String create = "IF NOT EXISTS (SELECT name FROM master.dbo.sysdatabases WHERE name = N'RecipeFinder') CREATE DATABASE RecipeFinder";
 
             try (Statement statement = connection.createStatement())
             {
                 statement.executeUpdate(create);
 
                 // update connectionURL
-                URL = "jdbc:mysql://localhost:3307/RecipeFinder";
+                connectionURL = "jdbc:sqlserver://127.0.0.1:1433;databaseName=RecipeFinder;userName=testUser;password=testUser";
                 System.out.println("Database created successfully!");
 
                 // create the tables
@@ -42,23 +46,26 @@ public class CreateDatabase
     private void createTables()
     {
         // connect to database
-        try (Connection connection = DriverManager.getConnection(URL, user, pass))
+        try (Connection connection = DriverManager.getConnection(connectionURL))
         {
-            //Class.forName(className);
+            Class.forName(className);
 
             // query Strings
-            String recipes = "CREATE TABLE IF NOT EXISTS Recipes (" + 
-            "recipeId INT NOT NULL, recipeName NVARCHAR(100), PRIMARY KEY (recipeId)" +
-            ");";
+            String recipes = "IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Recipes]') AND type in (N'U')) BEGIN " +
+            "CREATE TABLE Recipes (" + 
+            "recipeId INT NOT NULL PRIMARY KEY, recipeName NVARCHAR(max)" +
+            "); END";
 
-            String ingredients = "CREATE TABLE IF NOT EXISTS Ingredients (" + 
-            "ingredientId INT NOT NULL, ingredientName NVARCHAR(100), PRIMARY KEY (ingredientId)" +
-            ");";
+            String ingredients = "IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Recipes]') AND type in (N'U')) BEGIN " +
+            "CREATE TABLE Ingredients (" + 
+            "ingredientId INT NOT NULL PRIMARY KEY, ingredientName NVARCHAR(max)" +
+            "); END";
 
-            String ri = "CREATE TABLE IF NOT EXISTS RI (" + 
-            "ingredientName NVARCHAR(100), ingredientId INT, recipeId INT, FOREIGN KEY (ingredientId) REFERENCES Ingredients(ingredientId), " + 
-            "FOREIGN KEY (recipeId) REFERENCES Ingredients(recipeId)" +
-            ");";
+            String ri = "IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Recipes]') AND type in (N'U')) BEGIN " +
+            "CREATE TABLE RI (" + 
+            "ingredientName NVARCHAR(max), ingredientId INT FOREIGN KEY REFERENCES Ingredients(ingredientId), " + 
+            "recipeId INT FOREIGN KEY REFERENCES Recipes(recipeId)" +
+            "); END";
 
             try (Statement stmt = connection.createStatement()/*; Statement stmt2 = connection.createStatement(); Statement stmt3 = connection.createStatement()*/)
             {
