@@ -9,10 +9,76 @@ public class DatabaseFunctions
     // used to establish the driver location
     final private static String CLASSNAME = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
 
+    // method that finds a clientId based on their name
+    // findUser gets called on app startup. If -1 is returned, call createUser
+    public int findUser(String userName)
+    {
+        // get connection
+        try (Connection connection = DriverManager.getConnection(connectionURL))
+        {
+            Class.forName(CLASSNAME);
+
+            // query string
+            String query = "SELECT userId FROM Users WHERE nameOfUser = ?;";
+
+            // run query
+            try(PreparedStatement stmt = connection.prepareStatement(query))
+            {
+                stmt.setString(1, userName);
+                ResultSet result = stmt.executeQuery();
+
+                while(result.next())
+                {
+                    return result.getInt(1);
+                }
+            }
+
+            connection.close();
+        }
+
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        return -1;
+    }
+
+    // method that creates a client user if they don't exist in the database
+    private void createUser(String userName)
+    {
+        // connect to database
+        try (Connection connection = DriverManager.getConnection(connectionURL))
+        {
+            Class.forName(CLASSNAME);
+
+            //query string
+            String query = "INSERT INTO Users VALUES(?,?);";
+
+            try (PreparedStatement stmt = connection.prepareStatement(query))
+            {
+                // find max key, add 1 for the new user
+                int maxKey = findMaxKey("Users") + 1;
+                stmt.setInt(1, maxKey);
+                stmt.setString(2, userName);
+
+                stmt.executeUpdate();
+
+                System.out.println("Name not found in database. User added to database.");
+            }
+            connection.close();
+        }
+
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
     // function to insert a new recipe into the database. Takes in the recipeName and ingredient list
     // need to check if the ingredient already exists in Ingredients. If so, then don't insert into Ingredients, but still update RI with a new connection to a recipe
     // find max key of ingredient and recipe tables
-    public void insertRecipe(String recipeName, ArrayList<String> ingredients)
+    public void insertRecipe(String recipeName, ArrayList<String> ingredients, int userId)
     {
         // connect to database
         try (Connection connection = DriverManager.getConnection(connectionURL))
@@ -20,7 +86,7 @@ public class DatabaseFunctions
             Class.forName(CLASSNAME);
 
             // insert statement
-            String insertRec = "INSERT INTO Recipes VALUES(?,?);";
+            String insertRec = "INSERT INTO Recipes VALUES(?,?,?);";
             String insertIng = "INSERT INTO Ingredients VALUES(?,?);";
             String riInsert = "INSERT INTO RI VALUES(?,?,?)";
 
@@ -31,6 +97,7 @@ public class DatabaseFunctions
                 int maxKeyRecipes = findMaxKey("Recipes") + 1;
                 stmt1.setInt(1, maxKeyRecipes);
                 stmt1.setString(2, recipeName);
+                stmt1.setInt(3, userId);
                 stmt1.executeUpdate();
                 System.out.println("Recipe added to Recipes table");
 
@@ -83,14 +150,19 @@ public class DatabaseFunctions
             // query string
             String query= "";
 
-            if (tableName.equals("Recipes"))
+            if (tableName.equalsIgnoreCase("Recipes"))
             {
                 query = "SELECT MAX(recipeId) FROM Recipes;"; 
             }
 
-            else
+            else if (tableName.equalsIgnoreCase("Ingredients"))
             {
                 query = "SELECT MAX(ingredientId) FROM Ingredients;"; 
+            }
+
+            else if (tableName.equalsIgnoreCase("Users"))
+            {
+                query = "SELECT MAX(userId) FROM Users;";
             }
             
             // run statement and return the result
@@ -179,19 +251,19 @@ public class DatabaseFunctions
 
     // searches for ingredients in a given recipe. Returns the recipe name. 
     // main searching algorithm/idea. 
-    public String findIngredientsInRecipe(ArrayList<String> ingredients, String recipeName)
+    public String findIngredientsInRecipe(ArrayList<String> ingredients, String recipeName, int userId)
     {
         // connect to database
         try (Connection connection = DriverManager.getConnection(connectionURL))
         {            
             Class.forName(CLASSNAME);
 
-            int numIngredients = countIngredientsInRecipe(recipeName);
+            int numIngredients = countIngredientsInRecipe(recipeName, userId);
 
             // prepared statement string
             String query = "SELECT Ingredients.ingredientName " +
             " FROM (Recipes INNER JOIN RI ON Recipes.recipeId = RI.recipeId) INNER JOIN Ingredients ON  RI.ingredientId = Ingredients.ingredientId " +
-            " WHERE recipeName = ? AND Ingredients.ingredientName = ?;";
+            " WHERE recipeName = ? AND Ingredients.ingredientName = ? AND userId = ?;";
 
             try (PreparedStatement statement = connection.prepareStatement(query))
             {
@@ -202,6 +274,7 @@ public class DatabaseFunctions
                     String curIngredient = ingredients.get(i);
                     statement.setString(1, recipeName);
                     statement.setString(2, curIngredient);
+                    statement.setInt(3, userId);
                     ResultSet result = statement.executeQuery();
 
                     while (result.next())
@@ -292,7 +365,7 @@ public class DatabaseFunctions
     } // end selectAllRecipes
 
     // counts all ingredients in a given recipe
-    private int countIngredientsInRecipe(String recipeName)
+    private int countIngredientsInRecipe(String recipeName, int userId)
     {
         // connect to database
         try (Connection connection = DriverManager.getConnection(connectionURL))
@@ -302,12 +375,13 @@ public class DatabaseFunctions
             // query string
             String query = "SELECT COUNT(ingredientId) AS numIngredients " 
             + "FROM Recipes INNER JOIN RI ON Recipes.recipeId = RI.recipeId "
-            + "WHERE Recipes.recipeName = ?;";
+            + "WHERE Recipes.recipeName = ? AND Recipes.userId = ?;";
 
             // execute statement and print result
             try (PreparedStatement statement = connection.prepareStatement(query))
             {
                 statement.setString(1, recipeName);
+                statement.setInt(2, userId);
 
                 ResultSet result = statement.executeQuery();
 
