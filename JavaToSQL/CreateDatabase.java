@@ -51,17 +51,22 @@ public class CreateDatabase
             Class.forName(className);
 
             // query Strings
-            String recipes = "IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Recipes]') AND type in (N'U')) BEGIN " +
-            "CREATE TABLE Recipes (" + 
-            "recipeId INT NOT NULL PRIMARY KEY, recipeName NVARCHAR(max)" +
+            String users = "IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND type in (N'U')) BEGIN " +
+            "CREATE TABLE Users (" + 
+            "userId INT NOT NULL PRIMARY KEY, nameOfUser NVARCHAR(max)" + 
             "); END";
 
-            String ingredients = "IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Recipes]') AND type in (N'U')) BEGIN " +
+            String recipes = "IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Recipes]') AND type in (N'U')) BEGIN " +
+            "CREATE TABLE Recipes (" + 
+            "recipeId INT NOT NULL PRIMARY KEY, recipeName NVARCHAR(max), clientId INT FOREIGN KEY REFERENCES Users(userId)" +
+            "); END";
+
+            String ingredients = "IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Ingredients]') AND type in (N'U')) BEGIN " +
             "CREATE TABLE Ingredients (" + 
             "ingredientId INT NOT NULL PRIMARY KEY, ingredientName NVARCHAR(max)" +
             "); END";
 
-            String ri = "IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Recipes]') AND type in (N'U')) BEGIN " +
+            String ri = "IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[RI]') AND type in (N'U')) BEGIN " +
             "CREATE TABLE RI (" + 
             "ingredientName NVARCHAR(max), ingredientId INT FOREIGN KEY REFERENCES Ingredients(ingredientId), " + 
             "recipeId INT FOREIGN KEY REFERENCES Recipes(recipeId)" +
@@ -69,7 +74,8 @@ public class CreateDatabase
 
             try (Statement stmt = connection.createStatement()/*; Statement stmt2 = connection.createStatement(); Statement stmt3 = connection.createStatement()*/)
             {
-                // run the queries
+                // run the queries                
+                stmt.executeUpdate(users);
                 stmt.executeUpdate(recipes);
                 stmt.executeUpdate(ingredients);
                 stmt.executeUpdate(ri);
