@@ -64,7 +64,7 @@ public class DatabaseFunctions
 
                 stmt.executeUpdate();
 
-                System.out.println("Name not found in database. User added to database.");
+                System.out.println("User added to database.");
             }
             connection.close();
         }
