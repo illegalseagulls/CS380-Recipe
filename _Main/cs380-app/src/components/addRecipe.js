@@ -6,28 +6,23 @@ class AddRecipe extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            recipeName: '', curIngredient: '', amount: '', unit: '', ingredientList: '', directions: '',
-            recipeDisplayName: '', directionDisplay: ''
+            recipeName: '', curIngredient: '', amount: '', unit: 'N/A', directions: '',
+            recipeDisplayName: '', ingredientList: [], directionDisplay: ''
         };
     }
 
-    handleRecipeSubmit = (event) => {
-        event.preventDefault();
-        this.setState({ recipeDisplayName: this.state.recipeName });
-        this.setState({ recipeName: '' });
-    }
-
-    handleDirectionsSubmit = (event) => {
-        event.preventDefault();
-        this.setState({ directionDisplay: this.state.directions });
-        this.setState({ directions: '' });
-    }
-
+    // Recipe Name Methods
     handleRecipeNameChange = (event) => {
         event.preventDefault();
         this.setState({ recipeName: event.target.value })
     }
 
+    handleRecipeSubmit = (event) => {
+        event.preventDefault();
+        this.setState({ recipeDisplayName: this.state.recipeName, /*recipeName: ''*/ });
+    }
+
+    // Ingredient Methods
     handleIngredientNameChange = (event) => {
         event.preventDefault();
         this.setState({ curIngredient: event.target.value });
@@ -45,14 +40,33 @@ class AddRecipe extends React.Component {
 
     handleIngredientSubmit = (event) => {
         event.preventDefault();
-        const newVal = this.state.curIngredient + this.state.amount + this.state.unit;
-        this.setState({ ingredientList: newVal })
 
-        this.setState({ curIngredient: '' })
-        this.setState({ amount: '' })
-        this.setState({ unit: '' })
+        let newVal = '';
+        if (this.state.unit === 'N/A') {
+            newVal = this.state.amount + ' ' + this.state.curIngredient;
+        }
+        else {
+            newVal = this.state.amount + ' ' + this.state.unit + ' ' + this.state.curIngredient;
+        }
 
-        console.log(this.state.ingredientList);
+        console.log(newVal);
+
+        this.setState({
+            ingredientList: this.state.ingredientList.concat([newVal]),
+            //curIngredient: '', amount: '', unit: 'N/A'
+        });
+    }
+
+    // Directions methods
+    handleDirectionsChange = (event) => {
+        event.preventDefault();
+        this.setState({ directions: event.target.value });
+    }
+
+    handleDirectionsSubmit = (event) => {
+        event.preventDefault();
+        this.setState({ directionDisplay: this.state.directions, /*directions: ''*/ });
+        console.log(this.state.directionDisplay);
     }
 
     render() {
@@ -68,7 +82,6 @@ class AddRecipe extends React.Component {
                                 <label>Recipe Name:
                                 <input type='text' style={{ marginLeft: 5 }} value={this.state.value} onChange={this.handleRecipeNameChange} />
                                 </label>
-                                {/* <button style={{ marginLeft: 20 }}>Submit</button> */}
                                 <input type='submit' value='Submit' style={{ marginLeft: 20 }} />
                             </form>
                         </div>
@@ -86,13 +99,13 @@ class AddRecipe extends React.Component {
                                     <input type='text' style={{ marginLeft: 5 }} onChange={this.handleAmountChange} />
                                     <label style={{ marginLeft: 10 }}>Unit: </label>
                                     <select style={{ marginLeft: 5 }} onChange={this.handleUnitChange}>
+                                        <option label='N/A'>N/A</option>
                                         <option label='tsp'>tsp</option>
                                         <option label='Tbsp'>Tbsp</option>
                                         <option label='cup'>cup</option>
                                         <option label='oz'>oz</option>
                                     </select>
                                 </div>
-                                {/* <button style={{ marginLeft: 200, marginTop: 5 }} onClick={() => console.log("Ingredient name Submitted")}>Submit</button> */}
                                 <input type='submit' value='Submit' style={{ marginLeft: 200, marginTop: 5 }} />
                             </form>
                         </div>
@@ -102,9 +115,9 @@ class AddRecipe extends React.Component {
                         <div style={{ marginBottom: 50, borderStyle: 'solid', borderColor: 'black', borderWidth: 4, height: 350 }}>
                             <form style={{ marginTop: 20, marginLeft: 5, marginRight: 5 }} >
                                 <div>
-                                    <textarea style={{ height: 275, width: 490 }} />
+                                    <textarea style={{ height: 275, width: 490 }} onChange={this.handleDirectionsChange} />
                                 </div>
-                                <button style={{ marginLeft: 200, marginTop: 5 }} onClick={() => console.log("Directions submitted")}>Submit</button>
+                                <button style={{ marginLeft: 200, marginTop: 5 }} onClick={this.handleDirectionsSubmit}>Submit</button>
                             </form>
                         </div>
                     </div>
@@ -113,7 +126,13 @@ class AddRecipe extends React.Component {
                     <div style={{ display: 'inline-block', float: 'left', }}>
                         <h2>Display of Recipe</h2>
                         <div style={{ borderStyle: 'solid', borderColor: 'black', borderWidth: 4, width: 600, height: 700 }}>
-                            <h2>{this.state.recipeDisplayName}</h2>
+                            <h2>Recipe Name: {this.state.recipeDisplayName}</h2>
+                            <h2>Ingredient List:</h2>
+                            {this.state.ingredientList.map((ingredient) => (
+                                <li key={ingredient}>{ingredient}</li>
+                            ))}
+                            <h2>Directions:</h2>
+                            <p>{this.state.directionDisplay}</p>
                         </div>
                     </div>
                 </div>
