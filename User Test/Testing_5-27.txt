@@ -1,0 +1,5 @@
+Add Recipe Interface:
+
+- Make buttons larger
+
+- Have button that says something like "Save to Database" instead of "Submit" to save the recipe to database
