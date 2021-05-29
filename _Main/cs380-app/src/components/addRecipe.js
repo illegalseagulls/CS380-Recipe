@@ -19,7 +19,7 @@ class AddRecipe extends React.Component {
 
     handleRecipeSubmit = (event) => {
         event.preventDefault();
-        this.setState({ recipeDisplayName: this.state.recipeName, /*recipeName: ''*/ });
+        this.setState({ recipeDisplayName: this.state.recipeName });
     }
 
     // Ingredient Methods
@@ -38,6 +38,15 @@ class AddRecipe extends React.Component {
         this.setState({ unit: event.target.value });
     }
 
+    removeIngredient(str) {
+        var tempList = [...this.state.ingredientList];
+        var index = tempList.indexOf(str.ingredient);
+        if (index !== - 1) {
+            tempList.splice(index, 1);
+            this.setState({ ingredientList: tempList });
+        }
+    }
+
     handleIngredientSubmit = (event) => {
         event.preventDefault();
 
@@ -49,12 +58,11 @@ class AddRecipe extends React.Component {
             newVal = this.state.amount + ' ' + this.state.unit + ' ' + this.state.curIngredient;
         }
 
-        console.log(newVal);
-
         this.setState({
             ingredientList: this.state.ingredientList.concat([newVal]),
-            //curIngredient: '', amount: '', unit: 'N/A'
         });
+
+        console.log(this.state.ingredientList);
     }
 
     // Directions methods
@@ -65,7 +73,7 @@ class AddRecipe extends React.Component {
 
     handleDirectionsSubmit = (event) => {
         event.preventDefault();
-        this.setState({ directionDisplay: this.state.directions, /*directions: ''*/ });
+        this.setState({ directionDisplay: this.state.directions });
         console.log(this.state.directionDisplay);
     }
 
@@ -73,7 +81,7 @@ class AddRecipe extends React.Component {
         return (
             <React.Fragment>
                 <h1>Add Recipe</h1>
-                <div style={{ position: 'fixed', left: 100, padding: 0, margin: 0 }}>
+                <div style={{ position: 'fixed', left: 100, padding: 0, margin: 0, overflowY: 'scroll', width: '100%' }}>
                     <div style={{ display: 'inline-block', float: 'left', marginRight: 300 }}>
                         {/* Recipe Name Add */}
                         <h2>Add Recipe Name</h2>
@@ -106,7 +114,7 @@ class AddRecipe extends React.Component {
                                         <option label='oz'>oz</option>
                                     </select>
                                 </div>
-                                <input type='submit' value='Submit' style={{ marginLeft: 200, marginTop: 5 }} />
+                                <input type='submit' value='Add Ingredient' style={{ marginLeft: 190, marginTop: 5 }} />
                             </form>
                         </div>
 
@@ -124,12 +132,18 @@ class AddRecipe extends React.Component {
 
                     {/* Display Recipe */}
                     <div style={{ display: 'inline-block', float: 'left', }}>
-                        <h2>Display of Recipe</h2>
+                        <h2>Display of Recipe
+                            <button style={{ marginLeft: 50 }} onClick={() => console.log("Saved to Firebase!")}>Save Recipe</button>
+                        </h2>
                         <div style={{ borderStyle: 'solid', borderColor: 'black', borderWidth: 4, width: 600, height: 700 }}>
                             <h2>Recipe Name: {this.state.recipeDisplayName}</h2>
                             <h2>Ingredient List:</h2>
                             {this.state.ingredientList.map((ingredient) => (
-                                <li key={ingredient}>{ingredient}</li>
+                                <div style={{}}>
+                                    <li key={ingredient} style={{ marginLeft: 10 }}>{ingredient}
+                                        <button style={{ marginLeft: 50 }} onClick={() => this.removeIngredient({ ingredient })}>Remove</button>
+                                    </li>
+                                </div>
                             ))}
                             <h2>Directions:</h2>
                             <p>{this.state.directionDisplay}</p>
