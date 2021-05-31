@@ -1,4 +1,5 @@
 import React from 'react';
+import { addRecipe } from './Queries';
 
 
 class AddRecipe extends React.Component {
@@ -19,6 +20,7 @@ class AddRecipe extends React.Component {
 
     handleRecipeSubmit = (event) => {
         event.preventDefault();
+        event.target.reset();
         this.setState({ recipeDisplayName: this.state.recipeName });
     }
 
@@ -49,20 +51,22 @@ class AddRecipe extends React.Component {
 
     handleIngredientSubmit = (event) => {
         event.preventDefault();
+        event.target.reset();
+
+        let trimIng = this.state.curIngredient.trim();
+        let trimAmt = this.state.amount.trim();
 
         let newVal = '';
         if (this.state.unit === 'N/A') {
-            newVal = this.state.amount + ' ' + this.state.curIngredient;
+            newVal = trimAmt + ' ' + trimIng;
         }
         else {
-            newVal = this.state.amount + ' ' + this.state.unit + ' ' + this.state.curIngredient;
+            newVal = trimAmt + this.state.unit + ' ' + trimIng;
         }
 
         this.setState({
             ingredientList: this.state.ingredientList.concat([newVal]),
         });
-
-        console.log(this.state.ingredientList);
     }
 
     // Directions methods
@@ -75,6 +79,13 @@ class AddRecipe extends React.Component {
         event.preventDefault();
         this.setState({ directionDisplay: this.state.directions });
         console.log(this.state.directionDisplay);
+    }
+
+    // Display submit
+    handleDisplaySubmit = (event) => {
+        event.preventDefault();
+        addRecipe(this.state.recipeDisplayName, this.state.ingredientList, this.state.directionDisplay);
+        this.setState({ directionDisplay: '', recipeDisplayName: '', ingredientList: [] });
     }
 
     render() {
@@ -133,7 +144,7 @@ class AddRecipe extends React.Component {
                     {/* Display Recipe */}
                     <div style={{ display: 'inline-block', float: 'left', }}>
                         <h2>Display of Recipe
-                            <button style={{ marginLeft: 50 }} onClick={() => console.log("Saved to Firebase!")}>Save Recipe</button>
+                            <button style={{ marginLeft: 50 }} onClick={this.handleDisplaySubmit}>Save Recipe</button>
                         </h2>
                         <div style={{ borderStyle: 'solid', borderColor: 'black', borderWidth: 4, width: 600, height: 700 }}>
                             <h2>Recipe Name: {this.state.recipeDisplayName}</h2>
