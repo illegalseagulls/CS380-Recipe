@@ -75,16 +75,8 @@ function checkIfIngredientExists(name) {
 }
 
 // function to add a recipe and it's ingredient list to firestore
-export async function addRecipe(recipeName, ingredientList) {
-  // array for ingredients
-  var str = ingredientList.split(',');
-  var iList = [];
-  iList = iList.concat(str);
-
-  for (var i = 0; i < iList.length; i++) {
-    str = iList[i].trim();
-    iList[i] = str;
-  }
+// input: (str, str[], str)
+export async function addRecipe(recipeName, ingredientList, dir) {
 
   // add recipe to database with correct user id, ingredient list, and place everything correctly into RI
   // also find max id? maybe don't use pre-generated id's and instead create them myself
@@ -96,23 +88,30 @@ export async function addRecipe(recipeName, ingredientList) {
   // add recipe
   db.collection("recipes").add({
     recipeName: recipeName.toLowerCase(),
-    userId: custUId
+    userId: custUId,
+    ingredientCount: ingredientList.length,
+    directions: dir,
   });
 
   console.log("Recipes Collection updated!");
 
   // add iList to ingredients collection. Check for duplicates
-  for (i = 0; i < iList.length; i++) {
+  for (var i = 0; i < ingredientList.length; i++) {
 
-    var exists = await checkIfIngredientExists(iList[i]);
+    var exists = await checkIfIngredientExists(ingredientList[i]);
 
     if (exists[0]) {
-      console.log("Ingredient already in database: " + iList[i]);
+      console.log("Ingredient already in database: " + ingredientList[i]);
     }
 
     else {
+      var firstSpace = ingredientList[i].indexOf(' ');
+      var amt = ingredientList[i].slice(0, firstSpace);
+      var name = ingredientList[i].slice(firstSpace + 1);
+
       db.collection("ingredients").add({
-        ingredientName: iList[i].toLowerCase(),
+        ingredientName: ingredientList[i].toLowerCase(),
+        amount: amt,
       });
     }
   }
@@ -126,12 +125,14 @@ export async function addRecipe(recipeName, ingredientList) {
   var tId = await getRecipeId(recipeName);
   var recId = tId[0];
 
-  for (i = 0; i < iList.length; i++) {
-    tId = await getIngId(iList[i]);
+  for (i = 0; i < ingredientList.length; i++) {
+    tId = await getIngId(ingredientList[i]);
     var ingId = tId[0];
+    firstSpace = ingredientList[i].indexOf(' ');
+    name = ingredientList[i].slice(firstSpace + 1);
 
     db.collection('RI').add({
-      ingredientName: iList[i].toLowerCase(),
+      ingredientName: name,
       ingredientId: ingId,
       recipeId: recId
     });
