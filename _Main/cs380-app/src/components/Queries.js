@@ -53,7 +53,7 @@ export function getUserId() {
   })
 }
 
-// function to get recipeId
+// function to get recipeId (WILL NEED TO MAKE SURE ONLY RETURNS MATCHING USER)
 export function getRecipeId(recipeName) {
   return db.collection('recipes').where('recipeName', '==', recipeName.toLowerCase()).get().then(snapshot => {
     return snapshot.docs.map(doc => doc.id);
@@ -71,6 +71,13 @@ export function getIngId(ingredientName) {
 function checkIfIngredientExists(name) {
   return db.collection('ingredients').where('ingredientName', '==', name.toLowerCase()).get().then(snapshot => {
     return snapshot.docs.map(doc => doc.exists);
+  })
+}
+
+// function to get ingredientCount field (WILL NEED TO MAKE SURE ONLY RETURNS MATCHING USER)
+function getIngredientCount(recName) {
+  return db.collection('recipes').where('recipeName', '==', recName.toLowerCase()).get().then(snapshot => {
+    return snapshot.docs.map(doc => doc.get('ingredientCount'));
   })
 }
 
@@ -171,6 +178,9 @@ export async function findIngredientsInRecipe(ingredientList/*, userId*/) {
   for (i = 0; i < recArr.length; i++) {
     var arr = await getRecipeId(recArr[i]);
     var recId = arr[0];
+    arr = await getIngredientCount(recArr[i]);
+    var recipeIngCount = arr[0];
+    var ingCountFound = 0;
 
     for (var j = 0; j < iList.length; j++) {
       // ensures ingredient exists within the database
@@ -185,9 +195,14 @@ export async function findIngredientsInRecipe(ingredientList/*, userId*/) {
         arr = await isIngredientInRecipe(ingId, recId);
 
         if (arr) {
-          console.log('Ingredient : ' + arr[0] + " found in recipe: " + recArr[i]);
+          ingCountFound++;
         }
       }
+    }
+
+    // If all the ingredients in the recipe are found, return it
+    if (ingCountFound >= recipeIngCount) {
+      console.log(recArr[i] + " is returned to the screen");
     }
   }
 
