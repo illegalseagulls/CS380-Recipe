@@ -7,7 +7,7 @@ class AddRecipe extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            recipeName: '', curIngredient: '', amount: '', unit: 'N/A', directions: '',
+            recipeName: '', curIngredient: '', amount: '', unit: 'N/A', directions: '', databaseDirections: '',
             recipeDisplayName: '', ingredientList: [], directionDisplay: ''
         };
     }
@@ -77,15 +77,15 @@ class AddRecipe extends React.Component {
 
     handleDirectionsSubmit = (event) => {
         event.preventDefault();
-        this.setState({ directionDisplay: this.state.directions });
-        console.log(this.state.directionDisplay);
+        var newDir = this.state.directions.replace(/(\r\n|\n|\r)/gm, '|');
+        this.setState({ directionDisplay: this.state.directions, databaseDirections: newDir });
     }
 
     // Display submit
     handleDisplaySubmit = (event) => {
         event.preventDefault();
-        addRecipe(this.state.recipeDisplayName, this.state.ingredientList, this.state.directionDisplay);
-        this.setState({ directionDisplay: '', recipeDisplayName: '', ingredientList: [] });
+        addRecipe(this.state.recipeDisplayName, this.state.ingredientList, this.state.databaseDirections);
+        this.setState({ directionDisplay: '', recipeDisplayName: '', ingredientList: [], databaseDirections: '' });
     }
 
     render() {
@@ -157,7 +157,9 @@ class AddRecipe extends React.Component {
                                 </div>
                             ))}
                             <h2>Directions:</h2>
-                            <p>{this.state.directionDisplay}</p>
+                            <p style={{ whiteSpace: 'pre-wrap' }}>
+                                {this.state.directionDisplay}
+                            </p>
                         </div>
                     </div>
                 </div>
