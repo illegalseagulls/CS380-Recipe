@@ -28,11 +28,11 @@ var db = firebase.firestore();
 
 
 
-export function getAllRecipes() {
+export function getAllRecipeNames() {
   return db.collection('recipes').get().then(snapshot => {
     return snapshot.docs.map(doc => doc.get('recipeName'));
   });
-}
+} // end getAllRecipeNames
 
 
 // function to get userId
@@ -51,35 +51,55 @@ export function getUserId() {
   return db.collection('users').where('userName', '==', name).get().then(snapshot => {
     return snapshot.docs.map(doc => doc.id);
   })
-}
+} // end getUserId
 
 // function to get recipeId (WILL NEED TO MAKE SURE ONLY RETURNS MATCHING USER)
 export function getRecipeId(recipeName) {
   return db.collection('recipes').where('recipeName', '==', recipeName.toLowerCase()).get().then(snapshot => {
     return snapshot.docs.map(doc => doc.id);
   })
-}
+} // end getRecipeId
 
 // function to get ingredient id
 export function getIngId(ingredientName) {
   return db.collection('ingredients').where('ingredientName', '==', ingredientName.toLowerCase()).get().then(snapshot => {
     return snapshot.docs.map(doc => doc.id);
   })
-}
+} // end getIngId
 
 // checks if ingredient is already in database
 function checkIfIngredientExists(name) {
   return db.collection('ingredients').where('ingredientName', '==', name.toLowerCase()).get().then(snapshot => {
     return snapshot.docs.map(doc => doc.exists);
   })
-}
+} // end checkIfIngredientExists
 
 // function to get ingredientCount field (WILL NEED TO MAKE SURE ONLY RETURNS MATCHING USER)
 function getIngredientCount(recName) {
   return db.collection('recipes').where('recipeName', '==', recName.toLowerCase()).get().then(snapshot => {
     return snapshot.docs.map(doc => doc.get('ingredientCount'));
   })
-}
+} // end getIngredientCount
+
+function isIngredientInRecipe(ingredientId, recipeId) {
+  return db.collection("RI").where("ingredientId", '==', ingredientId).where("recipeId", '==', recipeId).get().then(snapshot => {
+    if (!snapshot.empty) {
+      return snapshot.docs.map(doc => doc.get("ingredientName"));
+    }
+  });
+} // end isIngredientInRecipe
+
+function getAllRecipeId() {
+  return db.collection('recipes').get().then(snapshot => {
+    return snapshot.docs.map(doc => doc.id);
+  })
+} // end getAllRecipeId
+
+function getAllDirections() {
+  return db.collection('recipes').get().then(snapshot => {
+    return snapshot.docs.map(doc => doc.get('directions'));
+  })
+} // end getAllDirections
 
 // function to add a recipe and it's ingredient list to firestore
 // input: (str, str[], str)
@@ -113,12 +133,10 @@ export async function addRecipe(recipeName, ingredientList, dir) {
 
     else {
       var firstSpace = ingredientList[i].indexOf(' ');
-      var amt = ingredientList[i].slice(0, firstSpace);
-      var name = ingredientList[i].slice(firstSpace + 1);
+      var name = ingredientList[i].slice(firstSpace + 1, ingredientList[i].length);
 
       db.collection("ingredients").add({
-        ingredientName: ingredientList[i].toLowerCase(),
-        amount: amt,
+        ingredientName: name.toLowerCase(),
       });
     }
   }
@@ -136,28 +154,23 @@ export async function addRecipe(recipeName, ingredientList, dir) {
     tId = await getIngId(ingredientList[i]);
     var ingId = tId[0];
     firstSpace = ingredientList[i].indexOf(' ');
+    var amt = ingredientList[i].slice(0, firstSpace);
     name = ingredientList[i].slice(firstSpace + 1);
 
     db.collection('RI').add({
-      ingredientName: name,
+      ingredientName: name.toLowerCase(),
+      amount: amt,
       ingredientId: ingId,
       recipeId: recId
     });
   }
 
   console.log("RI Collections Upgraded");
-}
-
-export function isIngredientInRecipe(ingredientId, recipeId) {
-  return db.collection("RI").where("ingredientId", '==', ingredientId).where("recipeId", '==', recipeId).get().then(snapshot => {
-    if (!snapshot.empty) {
-      return snapshot.docs.map(doc => doc.get("ingredientName"));
-    }
-  });
-}
+} // end addRecipe
 
 // userId is commented out since there are not any 'real' users in database. However this will need to be tracked later on
 export async function findIngredientsInRecipe(ingredientList/*, userId*/) {
+
   // split ingredient list
   var str = ingredientList.split(',');
   var iList = [];
@@ -173,7 +186,7 @@ export async function findIngredientsInRecipe(ingredientList/*, userId*/) {
   var userId = arr[0];*/
 
   // get all recipes
-  var recArr = await getAllRecipes();
+  var recArr = await getAllRecipeNames();
 
   for (i = 0; i < recArr.length; i++) {
     var arr = await getRecipeId(recArr[i]);
@@ -207,4 +220,14 @@ export async function findIngredientsInRecipe(ingredientList/*, userId*/) {
   }
 
   console.log("Searched");
-}
+} // end findIngredientsInRecipe
+
+export async function getRecipeDisplayInfo() {
+  // Go through recipes collection, find the document id, and grab recipeName and directions string. Then, loop through RI finding the ingredients where recipeId === recipeId
+
+  var allRecId = await getAllRecipeId(); // all recipeIds
+  var allRecName = await getAllRecipeNames(); // all recipeNames
+  var allDirections = await getAllDirections(); // all directions
+
+
+} // end of getRecipeDisplayInfo
