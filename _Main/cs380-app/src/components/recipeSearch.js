@@ -51,12 +51,12 @@ class RecipeSearch extends Component {
   render() {
     return (
       <React.Fragment>
-        <h1>Search Recipe based on Ingredients</h1>
-        <div style={{ position: 'fixed', left: 100, padding: 0, margin: 0, overflowY: 'scroll', width: '100%', height: '100%' }}>
 
+        <div style={{ position: 'fixed', left: 100, padding: 0, margin: 0, overflowY: 'scroll', width: '100%', height: '100%'}}>
+          <h1 style={{marginRight: 125}}>Search Recipe based on Ingredients</h1>
           {/* Ingredient Input */}
-          <div style={{ display: 'inline-block', float: 'left', marginRight: 300 }}>
-            <h2>Input Ingredients to Search For
+          <div className="topleft" style={{ display: 'inline-block', float: 'left', marginRight: 0 }}>
+            <h2 style={{marginRight: 100}}>Input Ingredients to Search For
             <button style={{ marginLeft: 50 }} onClick={this.handleSearchSubmit}>Search</button>
             </h2>
             <div style={{ marginBottom: 30, borderStyle: 'solid', borderColor: 'black', borderWidth: 1, height: 700, width: 600 }}>
@@ -81,9 +81,9 @@ class RecipeSearch extends Component {
           </div>
 
           {/* Recipe Display (Just going to do name for now) */}
-          <div style={{ display: 'inline-block', float: 'left', }}>
-            <h2>Recipes found</h2>
-            <div style={{ borderStyle: 'solid', borderColor: 'black', borderWidth: 1, width: 600, height: 700, overflowY: 'scroll' }}>
+          <div className="right">
+            <h2 style={{marginRight: 125}}>Recipes found</h2>
+            <div style={{ marginleft: 0, paddingleft: 0, borderStyle: 'solid', borderColor: 'black', borderWidth: 1, width: 600, height: 700, overflowY: 'scroll' }}>
 
               {/* Add ternary operator to handle null */}
 

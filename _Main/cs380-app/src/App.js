@@ -40,12 +40,10 @@ class App extends React.Component {
           <div>
           <h1 className="App-h1">Recipe Finder</h1>
           <header className="App-recipesearch">
-            <section className="topleft">
+            <section>
               <RecipeSearch recipeSearch={this.recipeSearch}/>
             </section>
-            <section className="right">
-              <RecipeList recipes={this.state.recipes} />
-            </section>
+
           </header>
           </div>
         )}/>
