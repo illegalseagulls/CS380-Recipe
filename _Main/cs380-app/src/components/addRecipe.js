@@ -21,7 +21,7 @@ class AddRecipe extends React.Component {
     handleRecipeSubmit = (event) => {
         event.preventDefault();
         event.target.reset();
-        this.setState({ recipeDisplayName: this.state.recipeName });
+        this.setState({ recipeDisplayName: this.state.recipeName, recipeName: '' });
     }
 
     // Ingredient Methods
@@ -65,7 +65,7 @@ class AddRecipe extends React.Component {
         }
 
         this.setState({
-            ingredientList: this.state.ingredientList.concat([newVal]),
+            ingredientList: this.state.ingredientList.concat([newVal]), unit: '', amount: '', curIngredient: ''
         });
     }
 
@@ -96,7 +96,7 @@ class AddRecipe extends React.Component {
                     <div style={{ display: 'inline-block', float: 'left', marginRight: 300 }}>
                         {/* Recipe Name Add */}
                         <h2>Add Recipe Name</h2>
-                        <div style={{ marginBottom: 30, borderStyle: 'solid', borderColor: 'black', borderWidth: 4, height: 70, width: 500 }}>
+                        <div style={{ marginBottom: 30, borderStyle: 'solid', borderColor: 'black', borderWidth: 1, height: 70, width: 500 }}>
                             <form style={{ marginTop: 20 }} onSubmit={this.handleRecipeSubmit}>
                                 <label>Recipe Name:
                                 <input type='text' style={{ marginLeft: 5 }} value={this.state.value} onChange={this.handleRecipeNameChange} />
@@ -107,7 +107,7 @@ class AddRecipe extends React.Component {
 
                         {/* Ingredient Add */}
                         <h2>Input Ingredients</h2>
-                        <div style={{ marginBottom: 30, borderStyle: 'solid', borderColor: 'black', borderWidth: 4, height: 100, margin: 0, }}>
+                        <div style={{ marginBottom: 30, borderStyle: 'solid', borderColor: 'black', borderWidth: 1, height: 100, margin: 0, }}>
                             <form style={{ marginTop: 20 }} onSubmit={this.handleIngredientSubmit} >
                                 <div>
                                     <label>Ingredient Name:</label>
@@ -131,7 +131,7 @@ class AddRecipe extends React.Component {
 
                         {/* Directions Add */}
                         <h2>Input Directions</h2>
-                        <div style={{ marginBottom: 50, borderStyle: 'solid', borderColor: 'black', borderWidth: 4, height: 350 }}>
+                        <div style={{ marginBottom: 50, borderStyle: 'solid', borderColor: 'black', borderWidth: 1, height: 350 }}>
                             <form style={{ marginTop: 20, marginLeft: 5, marginRight: 5 }} >
                                 <div>
                                     <textarea style={{ height: 275, width: 490 }} onChange={this.handleDirectionsChange} />
@@ -146,11 +146,11 @@ class AddRecipe extends React.Component {
                         <h2>Display of Recipe
                             <button style={{ marginLeft: 50 }} onClick={this.handleDisplaySubmit}>Save Recipe</button>
                         </h2>
-                        <div style={{ borderStyle: 'solid', borderColor: 'black', borderWidth: 4, width: 600, height: 700 }}>
+                        <div style={{ borderStyle: 'solid', borderColor: 'black', borderWidth: 1, width: 600, height: 700 }}>
                             <h2>Recipe Name: {this.state.recipeDisplayName}</h2>
                             <h2>Ingredient List:</h2>
                             {this.state.ingredientList.map((ingredient) => (
-                                <div style={{}}>
+                                <div>
                                     <li key={ingredient} style={{ marginLeft: 10 }}>{ingredient}
                                         <button style={{ marginLeft: 50 }} onClick={() => this.removeIngredient({ ingredient })}>Remove</button>
                                     </li>
