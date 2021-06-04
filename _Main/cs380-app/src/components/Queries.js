@@ -128,17 +128,6 @@ export async function findIngredientsInRecipe(ingredientList) {
   var recArr = await getAllRecipeNames();
   var recipeIds = await getAllRecipeId();
 
-  // split ingredient list
-  /*
-  var ingArr = [];
-  for (var i = 0; i < ingredientList.length; i++) {
-    var splitIndex = ingredientList[i].indexOf(' ', ingredientList[i].indexOf(' ') + 1);
-    var tempName = ingredientList[i].slice(splitIndex + 1, ingredientList[i].length);
-    var name = tempName.trim();
-
-    ingArr.push(name);
-  }*/
-
   // get ingredient list of a recipe. Check if ingredients are found
 
   var idsFound = []
