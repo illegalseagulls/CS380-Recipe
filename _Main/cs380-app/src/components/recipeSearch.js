@@ -52,18 +52,18 @@ class RecipeSearch extends Component {
     return (
       <React.Fragment>
 
-        <div style={{ position: 'fixed', left: 100, padding: 0, margin: 0, overflowY: 'scroll', width: '100%', height: '100%'}}>
-          <h1 style={{marginRight: 125}}>Search Recipe based on Ingredients</h1>
+        <div style={{ position: 'fixed', left: 100, padding: 0, margin: 0, overflowY: 'scroll', width: '100%', height: '100%' }}>
+          <h1 style={{ marginRight: 125 }}>Search Recipe based on Ingredients</h1>
           {/* Ingredient Input */}
           <div className="topleft" style={{ display: 'inline-block', float: 'left', marginRight: 0 }}>
-            <h2 style={{marginRight: 100}}>Input Ingredients to Search For
+            <h2 style={{ marginRight: 100 }}>Input Ingredients to Search For
             <button style={{ marginLeft: 50 }} onClick={this.handleSearchSubmit}>Search</button>
             </h2>
             <div style={{ marginBottom: 30, borderStyle: 'solid', borderColor: 'black', borderWidth: 1, height: 700, width: 600 }}>
               <form style={{ marginTop: 20 }} onSubmit={this.handleIngredientSubmit} >
                 <div>
                   <label>Ingredient Name:</label>
-                  <input type='text' style={{ marginLeft: 5 }} onChange={this.handleIngredientNameChange} />
+                  <input type='text' style={{ marginLeft: 5 }} onChange={this.handleIngredientNameChange} value={this.state.curIngredient} />
                   <input type='submit' value='Add Ingredient' style={{ marginLeft: 50 }} />
                 </div>
               </form>
@@ -71,18 +71,17 @@ class RecipeSearch extends Component {
               {/* Ingredient List display */}
               <h2>Ingredients to be Searched for:</h2>
               {this.state.ingredientList.map((ingredient) => (
-                <div>
+                <div key={ingredient}>
                   <li key={ingredient} style={{ marginLeft: 10 }}>{ingredient}
-                    <button style={{ marginLeft: 50 }} onClick={() => this.removeIngredient({ ingredient })}>Remove</button>
+                    <button style={{ marginLeft: 50 }} onClick={() => this.removeIngredient({ ingredient })} key={ingredient}>Remove</button>
                   </li>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Recipe Display (Just going to do name for now) */}
           <div className="right">
-            <h2 style={{marginRight: 125}}>Recipes found</h2>
+            <h2 style={{ marginRight: 125 }}>Recipes found</h2>
             <div style={{ marginleft: 0, paddingleft: 0, borderStyle: 'solid', borderColor: 'black', borderWidth: 1, width: 600, height: 700, overflowY: 'scroll' }}>
 
               {/* Add ternary operator to handle null */}

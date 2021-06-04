@@ -34,7 +34,6 @@ export function getAllRecipeNames() {
   });
 } // end getAllRecipeNames
 
-
 // function to get userId
 export function getUserId() {
   // user 1 or 2's recipe
@@ -60,35 +59,6 @@ export function getRecipeId(recipeName) {
   })
 } // end getRecipeId
 
-// function to get ingredient id
-export function getIngId(ingredientName) {
-  return db.collection('ingredients').where('ingredientName', '==', ingredientName.toLowerCase()).get().then(snapshot => {
-    return snapshot.docs.map(doc => doc.id);
-  })
-} // end getIngId
-
-// checks if ingredient is already in database
-function checkIfIngredientExists(name) {
-  return db.collection('ingredients').where('ingredientName', '==', name.toLowerCase()).get().then(snapshot => {
-    return snapshot.docs.map(doc => doc.exists);
-  })
-} // end checkIfIngredientExists
-
-// function to get ingredientCount field (WILL NEED TO MAKE SURE ONLY RETURNS MATCHING USER)
-function getIngredientCount(recName) {
-  return db.collection('recipes').where('recipeName', '==', recName.toLowerCase()).get().then(snapshot => {
-    return snapshot.docs.map(doc => doc.get('ingredientCount'));
-  })
-} // end getIngredientCount
-
-function isIngredientInRecipe(ingredientId, recipeId) {
-  return db.collection("RI").where("ingredientId", '==', ingredientId).where("recipeId", '==', recipeId).get().then(snapshot => {
-    if (!snapshot.empty) {
-      return snapshot.docs.map(doc => doc.get("ingredientName"));
-    }
-  });
-} // end isIngredientInRecipe
-
 function getAllRecipeId() {
   return db.collection('recipes').get().then(snapshot => {
     return snapshot.docs.map(doc => doc.id);
@@ -100,12 +70,6 @@ function getAllDirections() {
     return snapshot.docs.map(doc => doc.get('directions'));
   })
 } // end getAllDirections
-
-function getIngredientsInRecipe(recId) {
-  return db.collection('RI').where('recipeId', '==', recId).get().then(snapshot => {
-    return snapshot.docs.map(doc => doc.get('amount') + ' ' + doc.get('ingredientName'));
-  })
-} // getIngredientsInRecipe
 
 function getRecipeName(recId) {
   return db.collection('recipes').doc(recId).get().then(snapshot => {
@@ -119,125 +83,105 @@ function getRecipeDirections(recId) {
   })
 } // end getRecipeDirections
 
+function getRecipeIngredients(recId) {
+  return db.collection('recipes').doc(recId).get().then(snapshot => {
+    return snapshot.get('ingredients');
+  })
+}
+
 // function to add a recipe and it's ingredient list to firestore
 // input: (str, str[], str)
 export async function addRecipe(recipeName, ingredientList, dir) {
 
-  // add recipe to database with correct user id, ingredient list, and place everything correctly into RI
-  // also find max id? maybe don't use pre-generated id's and instead create them myself
+  // adds recipe to recipes collection
 
   // get userId
   var arr = await getUserId();
   var custUId = arr[0];
 
-  // add recipe
-  db.collection("recipes").add({
+  var newIngredients = [];
+  for (var i = 0; i < ingredientList.length; i++) {
+    var splitIndex = ingredientList[i].indexOf(' ', ingredientList[i].indexOf(' ') + 1);
+    var tempAmt = ingredientList[i].slice(0, splitIndex + 1);
+    var tempName = ingredientList[i].slice(splitIndex + 1, ingredientList[i].length);
+    var amt = tempAmt.trim();
+    var name = tempName.trim().toLowerCase();
+    newIngredients.push(amt + ' ' + name);
+  }
+
+  // add to recipes collection
+  db.collection('recipes').add({
     recipeName: recipeName.toLowerCase(),
     userId: custUId,
-    ingredientCount: ingredientList.length,
     directions: dir,
+    ingredients: newIngredients
   });
 
-  console.log("Recipes Collection updated!");
-
-  // add ingredientList to ingredients collection. Check for duplicates
-  for (var i = 0; i < ingredientList.length; i++) {
-
-    var firstSpace = ingredientList[i].indexOf(' ');
-    var name = ingredientList[i].slice(firstSpace + 1, ingredientList[i].length);
-    var exists = await checkIfIngredientExists(name);
-
-    if (exists[0]) {
-      console.log("Ingredient already in database: " + ingredientList[i]);
-    }
-
-    else {
-      db.collection("ingredients").add({
-        ingredientName: name.toLowerCase(),
-      });
-    }
-  }
-
-  console.log("Ingredients Collection Updated");
-
-  // add everything to RI table
-
-  // loop through ingredientList for names.
-  // find docId of both recipe and ingredients
-  var tId = await getRecipeId(recipeName);
-  var recId = tId[0];
-
-  for (i = 0; i < ingredientList.length; i++) {
-    firstSpace = ingredientList[i].indexOf(' ');
-    var amt = ingredientList[i].slice(0, firstSpace);
-    name = ingredientList[i].slice(firstSpace + 1, ingredientList[i].length);
-
-    tId = await getIngId(name);
-    var ingId = tId[0];
-
-    db.collection('RI').add({
-      ingredientName: name.toLowerCase(),
-      amount: amt,
-      ingredientId: ingId,
-      recipeId: recId
-    });
-  }
-
-  console.log("RI Collections Upgraded");
   alert("Recipe added to Database!")
 } // end addRecipe
 
-// userId is commented out since there are not any 'real' users in database. However this will need to be tracked later on
 // input: str []
-export async function findIngredientsInRecipe(ingredientList/*, userId*/) {
-
-  // get the userId * TO BE UNCOMMENTED ONCE WE ADD USERS TO DATABASE *
-  /*var arr = await getUserId();
-  var userId = arr[0];*/
+// searches whole database
+export async function findIngredientsInRecipe(ingredientList) {
 
   // get all recipes
   var recArr = await getAllRecipeNames();
-  var recipeIds = [];
+  var recipeIds = await getAllRecipeId();
 
-  for (var i = 0; i < recArr.length; i++) {
-    var arr = await getRecipeId(recArr[i]);
-    var recId = arr[0];
-    arr = await getIngredientCount(recArr[i]);
-    var recipeIngCount = arr[0];
+  // split ingredient list
+  /*
+  var ingArr = [];
+  for (var i = 0; i < ingredientList.length; i++) {
+    var splitIndex = ingredientList[i].indexOf(' ', ingredientList[i].indexOf(' ') + 1);
+    var tempName = ingredientList[i].slice(splitIndex + 1, ingredientList[i].length);
+    var name = tempName.trim();
+
+    ingArr.push(name);
+  }*/
+
+  // get ingredient list of a recipe. Check if ingredients are found
+
+  var idsFound = []
+  // loops through recipes
+  for (var i = 0; i < recipeIds.length; i++) {
+    var tempRecIngredients = await getRecipeIngredients(recipeIds[i]);
+    var recIngredients = [];
+
+    // split up recIngredients properly
+    for (var j = 0; j < tempRecIngredients.length; j++) {
+      var splitIndex = tempRecIngredients[j].indexOf(' ', tempRecIngredients[j].indexOf(' ') + 1);
+      var tempName = tempRecIngredients[j].slice(splitIndex + 1, tempRecIngredients[j].length);
+      var name = tempName.trim();
+
+      recIngredients.push(name);
+    }
+
     var ingCountFound = 0;
-
-    for (var j = 0; j < ingredientList.length; j++) {
-      // ensures ingredient exists within the database
-      var exists = await checkIfIngredientExists(ingredientList[j]);
-
-      // if it does exist, then get the ingredient id and check to see if the ingredient id appears in the recipe id
-      if (exists[0]) {
-        arr = await getIngId(ingredientList[j]);
-        var ingId = arr[0];
-
-        // check if the ingredientId has the current recipeId, if so, store it.
-        arr = await isIngredientInRecipe(ingId, recId);
-
-        if (arr) {
-          ingCountFound++;
-        }
+    // check if ingredients are found
+    for (j = 0; j < ingredientList.length; j++) {
+      if (recIngredients.includes(ingredientList[j])) {
+        ingCountFound++;
       }
     }
 
-    console.log(recArr[i] + ": " + ingCountFound + " : " + recipeIngCount);
+    console.log(recArr[i] + ': ' + ingCountFound + ' : ' + recIngredients.length);
 
-    // If all the ingredients in the recipe are found, return it
-    if (ingCountFound >= recipeIngCount) {
-      recipeIds.push(recId);
+    if (ingCountFound >= recIngredients.length) {
+      idsFound.push(recipeIds[i]);
     }
   }
 
   console.log("Searched");
 
-  var result = await getSearchedRecipesInfo(recipeIds);
-
+  var result = await getSearchedRecipesInfo(idsFound);
   return result;
 } // end findIngredientsInRecipe
+
+// input: str [], str
+// searches only user's recipes
+export async function findIngredientsInUsersRecipes(ingredientList, userId) {
+
+} // end findIngredientsInUsersRecipes
 
 // gets all display info
 export async function getRecipeDisplayInfo() {
@@ -258,7 +202,34 @@ export async function getSearchedRecipesInfo(recipeIdList) {
     var name = await getRecipeName(recipeIdList[i]);
     var tempDirections = await getRecipeDirections(recipeIdList[i]);
     var directions = tempDirections.replace(/(\|)/g, '\n');
-    var ingredientList = await getIngredientsInRecipe(recipeIdList[i]);
+
+    // remove any 0s and N/A substrings from ingredient list
+    var tempIngredients = await getRecipeIngredients(recipeIdList[i]);
+
+    var ingredientList = [];
+    for (var j = 0; j < tempIngredients.length; j++) {
+      var splitIndex = tempIngredients[j].indexOf(' ', tempIngredients[j].indexOf(' ') + 1);
+      var tempAmt = tempIngredients[j].slice(0, splitIndex + 1);
+      var tempName = tempIngredients[j].slice(splitIndex + 1, tempIngredients[j].length);
+
+      var amt = tempAmt.trim();
+      var ingName = tempName.trim();
+
+      if (amt.substring(0) === '0') {
+
+        if (amt.substring(ingName.indexOf(' ')) === 'N/A') {
+          ingredientList.push(ingName);
+        }
+
+        else {
+          ingredientList.push(amt.substring(0) + ' ' + ingName);
+        }
+      }
+      else {
+        ingredientList.push(ingName);
+      }
+    }
+
     result.push({ recipeName: name, recipeDirections: directions, ingredients: ingredientList });
   }
 
