@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { addRecipe } from './Queries';
 import './addRecipe.css'
-import { TextField, Button, Select, MenuItem, FormControl, InputLabel, IconButton } from '@material-ui/core'
+import { TextField, Button, Select, MenuItem, FormControl, InputLabel, IconButton, makeStyles } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 
 class AddRecipe extends React.Component {
@@ -12,6 +12,7 @@ class AddRecipe extends React.Component {
             recipeName: '', curIngredient: '', amount: '', unit: 'N/A', directions: '', databaseDirections: '', databaseIngredientList: [],
             recipeDisplayName: '', ingredientList: [], directionDisplay: ''
         };
+
     }
 
     // Recipe Name Methods
@@ -120,17 +121,18 @@ class AddRecipe extends React.Component {
     submitButton3 = {
         backgroundColor: '#1B2845',
         color: 'white',
-        marginLeft: 50,
+        marginBottom: 10,
     };
 
 
     render() {
         return (
             <div className='wrapper'>
-                <h1>Add Recipe</h1>
+                <p className='pageHeader'>Add Recipe</p>
+                {/* <div style={{ borderColor: 'black', borderStyle: 'solid', height: '100%', position: 'absolute', left: '47%' }} /> */}
                 <div className='addWrapper'>
                     {/* Recipe Name Add */}
-                    <h2>Add Recipe Name</h2>
+                    <p className='headers'>Add Recipe Name</p>
                     <div className='recipeName'>
                         <form
                             style={{ marginTop: 5 }}
@@ -142,6 +144,7 @@ class AddRecipe extends React.Component {
                                 variant='outlined'
                                 onChange={this.handleRecipeNameChange}
                                 autoComplete='off'
+                                style={{ backgroundColor: '#F3E9D2' }}
                             />
                             <Button
                                 type='submit'
@@ -153,7 +156,7 @@ class AddRecipe extends React.Component {
                     </div>
 
                     {/* Ingredient Add */}
-                    <h2>Input Ingredients</h2>
+                    <p className='headers'>Input Ingredients</p>
                     <div className='ingredientAdd'>
                         <form
                             style={{ marginTop: 20 }}
@@ -165,7 +168,7 @@ class AddRecipe extends React.Component {
                                     label='Ingredient Name'
                                     variant='outlined'
                                     onChange={this.handleIngredientNameChange} autoComplete='off'
-                                    style={{ marginBottom: 10 }}
+                                    style={{ marginBottom: 10, backgroundColor: '#F3E9D2' }}
                                 />
                             </div>
                             <div>
@@ -175,6 +178,7 @@ class AddRecipe extends React.Component {
                                     variant='outlined'
                                     onChange={this.handleAmountChange}
                                     autoComplete='off'
+                                    style={{ backgroundColor: '#F3E9D2' }}
                                 />
                                 <FormControl variant='outlined' >
                                     <InputLabel id='unitLabel'>Unit</InputLabel>
@@ -184,7 +188,7 @@ class AddRecipe extends React.Component {
                                         value={this.state.unit ? this.state.unit : 'N/A'}
                                         onChange={this.handleUnitChange}
                                         label='Unit'
-                                        style={{ marginLeft: 5, width: 100 }}
+                                        style={{ marginLeft: 5, width: 100, backgroundColor: '#F3E9D2' }}
                                     >
                                         <MenuItem value={'N/A'}>N/A</MenuItem>
                                         <MenuItem value={'tsp'}>tsp</MenuItem>
@@ -205,7 +209,7 @@ class AddRecipe extends React.Component {
                     </div>
 
                     {/* Directions Add */}
-                    <h2>Input Directions</h2>
+                    <p className='headers'>Input Directions</p>
                     <div className='addDirections'>
                         <form
                             style={{ marginTop: 20, marginLeft: 5, marginRight: 5 }}
@@ -225,21 +229,21 @@ class AddRecipe extends React.Component {
                     </div>
                 </div>
 
+
+
                 {/* Display Recipe */}
                 <div className='displayWrapper'>
-                    <h2>Display of Recipe
-                            <Button
-                            style={this.submitButton3}
-                            onClick={this.handleDisplaySubmit}
-                            variant='contained'
-                        >Save Recipe</Button>
-                    </h2>
+                    <Button
+                        style={this.submitButton3}
+                        onClick={this.handleDisplaySubmit}
+                        variant='contained'
+                    >Save Recipe</Button>
                     <div className='recipeDisplayBox'>
-                        <h2>Recipe Name: {this.state.recipeDisplayName}</h2>
-                        <h2>Ingredient List:</h2>
+                        <h2 style={{ marginLeft: 5 }}>Recipe Name: {this.state.recipeDisplayName}</h2>
+                        <h2 style={{ marginLeft: 5 }}>Ingredient List:</h2>
                         {this.state.ingredientList.map((ingredient) => (
                             <div key={ingredient}>
-                                <li key={ingredient} style={{ marginLeft: 10 }}>{ingredient}
+                                <li key={ingredient} style={{ marginLeft: 15 }}>{ingredient}
                                     <IconButton
                                         key={ingredient}
                                         style={{ marginLeft: 50, color: '#1B2845' }}
@@ -248,8 +252,8 @@ class AddRecipe extends React.Component {
                                 </li>
                             </div>
                         ))}
-                        <h2>Directions:</h2>
-                        <p style={{ whiteSpace: 'pre-wrap' }}>
+                        <h2 style={{ marginLeft: 5 }}>Directions:</h2>
+                        <p style={{ whiteSpace: 'pre-wrap', marginLeft: 15 }}>
                             {this.state.directionDisplay}
                         </p>
                     </div>
