@@ -239,8 +239,8 @@ class AddRecipe extends React.Component {
                         variant='contained'
                     >Save Recipe</Button>
                     <div className='recipeDisplayBox'>
-                        <h2 style={{ marginLeft: 5 }}>Recipe Name: {this.state.recipeDisplayName}</h2>
-                        <h2 style={{ marginLeft: 5 }}>Ingredient List:</h2>
+                        <p className='headers' style={{ marginLeft: 5 }}>Recipe Name: {this.state.recipeDisplayName} </p>
+                        <p className='headers' style={{ marginLeft: 5 }}>Ingredient List:</p>
                         {this.state.ingredientList.map((ingredient) => (
                             <div key={ingredient}>
                                 <li key={ingredient} style={{ marginLeft: 15 }}>{ingredient}
@@ -252,7 +252,7 @@ class AddRecipe extends React.Component {
                                 </li>
                             </div>
                         ))}
-                        <h2 style={{ marginLeft: 5 }}>Directions:</h2>
+                        <p className='headers' style={{ marginLeft: 5 }}>Directions:</p>
                         <p style={{ whiteSpace: 'pre-wrap', marginLeft: 15 }}>
                             {this.state.directionDisplay}
                         </p>
