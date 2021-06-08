@@ -148,12 +148,13 @@ export async function findIngredientsInRecipe(ingredientList) {
     var ingCountFound = 0;
     // check if ingredients are found
     for (j = 0; j < ingredientList.length; j++) {
-      if (recIngredients.includes(ingredientList[j])) {
+      var ingredient = ingredientList[j].toLowerCase();
+      if (recIngredients.includes(ingredient)) {
         ingCountFound++;
       }
     }
 
-    console.log(recArr[i] + ': ' + ingCountFound + ' : ' + recIngredients.length);
+    //console.log(recArr[i] + ': ' + ingCountFound + ' : ' + recIngredients.length);
 
     if (ingCountFound >= recIngredients.length) {
       idsFound.push(recipeIds[i]);
@@ -203,8 +204,10 @@ export async function getSearchedRecipesInfo(recipeIdList) {
 
       var amt = tempAmt.trim();
       var ingName = tempName.trim();
+      console.log(amt);
+      console.log(amt.substring(0, 1));
 
-      if (amt.substring(0) === '0') {
+      if (amt.substring(0, 1) === '0') {
 
         if (amt.substring(ingName.indexOf(' ')) === 'N/A') {
           ingredientList.push(ingName);
@@ -215,13 +218,13 @@ export async function getSearchedRecipesInfo(recipeIdList) {
         }
       }
       else {
-        ingredientList.push(ingName);
+        ingredientList.push(amt + ' ' + ingName);
       }
     }
 
     result.push({ recipeName: name, recipeDirections: directions, ingredients: ingredientList });
   }
 
-  console.log(result);
+  //console.log(result);
   return result;
 }
