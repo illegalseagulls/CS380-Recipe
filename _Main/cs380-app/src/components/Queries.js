@@ -125,7 +125,6 @@ export async function addRecipe(recipeName, ingredientList, dir) {
 export async function findIngredientsInRecipe(ingredientList) {
 
   // get all recipes
-  var recArr = await getAllRecipeNames();
   var recipeIds = await getAllRecipeId();
 
   // get ingredient list of a recipe. Check if ingredients are found
@@ -149,9 +148,15 @@ export async function findIngredientsInRecipe(ingredientList) {
     // check if ingredients are found
     for (j = 0; j < ingredientList.length; j++) {
       var ingredient = ingredientList[j].toLowerCase();
-      if (recIngredients.includes(ingredient)) {
+      // uncomment if want to find all ingredients in recipe
+      /*if (recIngredients.includes(ingredient)) {
         ingCountFound++;
+      }*/
+
+      if (recIngredients.includes(ingredient)) {
+        idsFound.push(recipeIds[i]);
       }
+
     }
 
     //console.log(recArr[i] + ': ' + ingCountFound + ' : ' + recIngredients.length);
