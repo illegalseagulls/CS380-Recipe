@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { addRecipe } from './Queries';
 import './addRecipe.css'
-import { TextField, Button, Select, MenuItem, FormControl, InputLabel, IconButton, makeStyles } from '@material-ui/core'
+import { TextField, Button, Select, MenuItem, FormControl, InputLabel, IconButton, } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 
 class AddRecipe extends React.Component {
@@ -10,10 +10,10 @@ class AddRecipe extends React.Component {
         super(props);
         this.state = {
             recipeName: '', curIngredient: '', amount: '', unit: 'N/A', directions: '', databaseDirections: '', databaseIngredientList: [],
-            recipeDisplayName: '', ingredientList: [], directionDisplay: ''
+            recipeDisplayName: '', ingredientList: [], directionDisplay: '',
         };
-
     }
+
 
     // Recipe Name Methods
     handleRecipeNameChange = (event) => {
@@ -94,7 +94,7 @@ class AddRecipe extends React.Component {
     handleDirectionsSubmit = (event) => {
         event.preventDefault();
         var newDir = this.state.directions.replace(/(\r\n|\n|\r)/gm, '|');
-        this.setState({ directionDisplay: this.state.directions, databaseDirections: newDir });
+        this.setState({ directionDisplay: this.state.directions, databaseDirections: newDir, directions: '' });
     }
 
     // Display submit
@@ -128,8 +128,8 @@ class AddRecipe extends React.Component {
     render() {
         return (
             <div className='wrapper'>
+                <div style={{ borderColor: 'black', borderStyle: 'solid', height: '100%', position: 'absolute', left: '47%' }} />
                 <p className='pageHeader'>Add Recipe</p>
-                {/* <div style={{ borderColor: 'black', borderStyle: 'solid', height: '100%', position: 'absolute', left: '47%' }} /> */}
                 <div className='addWrapper'>
                     {/* Recipe Name Add */}
                     <p className='headers'>Add Recipe Name</p>
