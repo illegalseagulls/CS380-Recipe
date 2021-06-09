@@ -1,9 +1,16 @@
 import React, { Component } from 'react';
 import { findIngredientsInRecipe } from './Queries'
-import { Accordion, AccordionSummary, AccordionDetails, Icon, Typography, IconButton } from '@material-ui/core'
-import DeleteIcon from '@material-ui/icons/Delete'
+import Accordion from '@material-ui/core/Accordion'
+import AccordionSummary from '@material-ui/core/AccordionSummary'
+import AccordionDetails from '@material-ui/core/AccordionDetails'
+import Icon from '@material-ui/core/Icon'
+import Typography from '@material-ui/core/Typography'
+import { IngredData, renderIngredName} from './ingredNames';
+import Autocomplete from 'react-autocomplete';
+import './index.css';
 
 class RecipeSearch extends Component {
+
 
   constructor(props) {
     super(props);
@@ -35,7 +42,6 @@ class RecipeSearch extends Component {
 
   async getRecipes() {
     var temp = await findIngredientsInRecipe(this.state.ingredientList);
-    console.log(temp);
     this.setState({ recipesToDisplay: temp });
   }
 
@@ -59,8 +65,30 @@ class RecipeSearch extends Component {
             <div style={{ marginBottom: 30, borderStyle: 'solid', borderColor: 'black', borderWidth: 1, height: 700, width: 600 }}>
               <form style={{ marginTop: 20 }} onSubmit={this.handleIngredientSubmit} >
                 <div>
-                  <label>Ingredient Name:</label>
-                  <input type='text' style={{ marginLeft: 5 }} onChange={this.handleIngredientNameChange} value={this.state.curIngredient} />
+
+                  {/*Autocomplete code start*/}
+                <label>Ingredient Name: </label>
+                <Autocomplete
+                value={this.state.curIngredient}
+               items={IngredData()}
+                getItemValue={item => item.title}
+               shouldItemRender={renderIngredName}
+               renderMenu={item => (
+                 <div className="dropdown">
+                    {item}
+                 </div>
+                )}
+               renderItem={(item, isHighlighted) =>
+                 <div className={`item ${isHighlighted ? 'selected-item' : ''}`}>
+                   {item.title}
+                 </div>
+               }
+              onChange={(event, curIngredient) => this.setState({ curIngredient })}
+              onSelect={curIngredient => this.setState({ curIngredient })}
+              />
+                {/*Autocomplete code end*/}  
+                 
+                  
                   <input type='submit' value='Add Ingredient' style={{ marginLeft: 50 }} />
                 </div>
               </form>
@@ -70,11 +98,7 @@ class RecipeSearch extends Component {
               {this.state.ingredientList.map((ingredient) => (
                 <div key={ingredient}>
                   <li key={ingredient} style={{ marginLeft: 10 }}>{ingredient}
-                    <IconButton
-                      key={ingredient}
-                      style={{ marginLeft: 50, color: '#1B2845' }}
-                      onClick={() => this.removeIngredient({ ingredient })}
-                    ><DeleteIcon /></IconButton>
+                    <button style={{ marginLeft: 50 }} onClick={() => this.removeIngredient({ ingredient })} key={ingredient}>Remove</button>
                   </li>
                 </div>
               ))}
@@ -84,6 +108,8 @@ class RecipeSearch extends Component {
           <div className="right">
             <h2 style={{ marginRight: 125 }}>Recipes found</h2>
             <div style={{ marginleft: 0, paddingleft: 0, borderStyle: 'solid', borderColor: 'black', borderWidth: 1, width: 600, height: 700, overflowY: 'scroll' }}>
+
+              {/* Add ternary operator to handle null */}
 
               {this.state.recipesToDisplay.map((element) => (
                 <Accordion key={element.recipeName} style={{ marginBottom: 10 }} >
@@ -110,6 +136,13 @@ class RecipeSearch extends Component {
 
           </div>
         </div>
+        {/* <div>
+          <form onSubmit={this.onSubmit}>
+            <input type="text" name="ingredientList" value={this.state.ingredientList} onChange={this.onChange} placeholder="Type Ingredients Here Seperated by a Comma..." />
+            <input type="submit" value="Submit" className="btn" />
+          </form>
+        </div>
+        */}
       </React.Fragment>
     )
   }
