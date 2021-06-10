@@ -1,0 +1,9 @@
+- No easy way to tell what page user is currently on
+
+- No progress bar to tell how long the search is taking
+
+- Clicked on 'Search' button twice and cancelled the current search. This was due to not knowing what was happening in the background.
+
+- Was confused what "Ingredients to be searched for" meant on the 'Search Recipe' page.
+
+- Liked the overall design of the 'Add Recipe' Page.
