@@ -6,6 +6,8 @@ import AccordionDetails from '@material-ui/core/AccordionDetails'
 import Icon from '@material-ui/core/Icon'
 import Typography from '@material-ui/core/Typography'
 import { IngredData, renderIngredName} from './ingredNames';
+import { TextField, Button, Select, MenuItem, FormControl, InputLabel, IconButton } from '@material-ui/core'
+import DeleteIcon from '@material-ui/icons/Delete'
 import Autocomplete from 'react-autocomplete';
 import './index.css';
 
@@ -51,6 +53,13 @@ class RecipeSearch extends Component {
     this.setState({ ingredientList: [], curIngredient: '' })
   }
 
+  submitButton = {
+      backgroundColor: '#1B2845',
+      color: 'white',
+      marginLeft: 20,
+      top: 5
+  };
+
   render() {
     return (
       <React.Fragment>
@@ -60,20 +69,21 @@ class RecipeSearch extends Component {
           {/* Ingredient Input */}
           <div className="topleft" style={{ display: 'inline-block', float: 'left', marginRight: 0 }}>
             <h2 style={{ marginRight: 100 }}>Input Ingredients to Search For
-            <button style={{ marginLeft: 50 }} onClick={this.handleSearchSubmit}>Search</button>
+            <Button type='submit' variant='contained' style={this.submitButton} onClick={this.handleSearchSubmit}>Search</Button>
             </h2>
-            <div style={{ marginBottom: 30, borderStyle: 'solid', borderColor: 'black', borderWidth: 1, height: 700, width: 600 }}>
+            <div style={{ marginBottom: 30, borderStyle: 'solid', borderColor: 'black', borderWidth: 1, height: 1000, width: 600, backgroundColor: '#b8bcce'}}>
               <form style={{ marginTop: 20 }} onSubmit={this.handleIngredientSubmit} >
                 <div>
-
                   {/*Autocomplete code start*/}
-                <label>Ingredient Name: </label>
                 <Autocomplete
+                label='Ingredient Name'
+                variant='outlined'
+                inputProps={{ style: { width: 214, height: 50, backgroundColor: '#F3E9D2', fontSize: 18 }, placeholder: 'Ingredient Name' }}
                 value={this.state.curIngredient}
-               items={IngredData()}
+                items={IngredData()}
                 getItemValue={item => item.title}
-               shouldItemRender={renderIngredName}
-               renderMenu={item => (
+                shouldItemRender={renderIngredName}
+                renderMenu={item => (
                  <div className="dropdown">
                     {item}
                  </div>
@@ -83,13 +93,19 @@ class RecipeSearch extends Component {
                    {item.title}
                  </div>
                }
+
               onChange={(event, curIngredient) => this.setState({ curIngredient })}
               onSelect={curIngredient => this.setState({ curIngredient })}
               />
-                {/*Autocomplete code end*/}  
-                 
-                  
-                  <input type='submit' value='Add Ingredient' style={{ marginLeft: 50 }} />
+                {/*Autocomplete code end*/}
+
+
+                <Button
+                    type='submit'
+                    value='Add Ingredient'
+                    style={this.submitButton}
+                    variant='contained'
+                > Submit </Button>
                 </div>
               </form>
 
@@ -98,7 +114,11 @@ class RecipeSearch extends Component {
               {this.state.ingredientList.map((ingredient) => (
                 <div key={ingredient}>
                   <li key={ingredient} style={{ marginLeft: 10 }}>{ingredient}
-                    <button style={{ marginLeft: 50 }} onClick={() => this.removeIngredient({ ingredient })} key={ingredient}>Remove</button>
+                  <IconButton
+                    key={ingredient}
+                    style={{ marginLeft: 50, color: '#1B2845' }}
+                    onClick={() => this.removeIngredient({ ingredient })}
+                  ><DeleteIcon /></IconButton>
                   </li>
                 </div>
               ))}
@@ -107,7 +127,7 @@ class RecipeSearch extends Component {
 
           <div className="right">
             <h2 style={{ marginRight: 125 }}>Recipes found</h2>
-            <div style={{ marginleft: 0, paddingleft: 0, borderStyle: 'solid', borderColor: 'black', borderWidth: 1, width: 600, height: 700, overflowY: 'scroll' }}>
+            <div style={{ marginleft: 0, paddingleft: 0, borderStyle: 'solid', borderColor: 'black', borderWidth: 1, width: 600, height: 1000, overflowY: 'scroll', backgroundColor: '#b8bcce' }}>
 
               {/* Add ternary operator to handle null */}
 
